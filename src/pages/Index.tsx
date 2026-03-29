@@ -37,7 +37,7 @@ const aboutDetails = [
 const proficiencies = [
   {
     label: "Skills",
-    items: ["API Design", "Frontend Architecture", "Backend Logic", "UX and Layout"],
+    items: ["API Integration", "Frontend Architecture", "Backend Logic", "UX and Layout"],
   },
   {
     label: "Tools",
@@ -55,13 +55,13 @@ const proficiencies = [
 
 const workItems = [
   {
-    title: "Full-Stack Developer",
+    title: "Web Developer",
     badge: "Current",
     period: "2025 - Now",
     company: "Hyper Access",
     location: "Philippines",
     description:
-      "At Hyper Access Solutions, I strengthened my foundation in algorithms, data structures, and core software development practices through hands-on experience.",
+      "At Hyper Access Solutions, I strengthened my foundation, and core software development practices through hands-on experience.",
   },
   {
     title: "Freelance Developer",
@@ -79,7 +79,7 @@ const workItems = [
     company: "DOST-PCAARRD",
     location: "Philippines",
     description:
-      "During my internship under a DOST-PCAARRD project, I worked as a full-stack developer for a cacao traceability system, building both mobile and backend components while also assisting in training end-users on system adoption.",
+      "During my internship under a DOST-PCAARRD project, I worked as a full-stack developer for a cacao traceability system, building backend components while also assisting in training end-users on system adoption.",
   },
 ];
 
