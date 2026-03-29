@@ -114,8 +114,6 @@ type SectionProps = {
 
 type ThemeMode = "dark" | "light";
 
-const THEME_STORAGE_KEY = "portfolio-theme";
-
 const Section = ({ id, title, children, className = "" }: SectionProps) => (
   <section
     id={id}
@@ -131,18 +129,7 @@ const Section = ({ id, title, children, className = "" }: SectionProps) => (
 );
 
 const Index = () => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") {
-      return "dark";
-    }
-
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    if (storedTheme === "dark" || storedTheme === "light") {
-      return storedTheme;
-    }
-
-    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-  });
+  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPortraitSequenceReady, setIsPortraitSequenceReady] = useState(false);
   const portraitCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -295,7 +282,6 @@ const Index = () => {
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
-    window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
   }, [themeMode]);
 
   useEffect(() => {
