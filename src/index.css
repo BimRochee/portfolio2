@@ -290,11 +290,12 @@
   }
 
   .hero-portrait-shell {
-    width: 100px;
-    height: 148px;
-    overflow: hidden;
-    border-radius: 20px;
-    border: 1px solid var(--ui-surface-border);
+      width: 100px;
+      height: 148px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--ui-surface-border);
     background: var(--ui-portrait-surface);
     box-shadow: var(--ui-shadow);
     opacity: 0;
@@ -302,10 +303,35 @@
   }
 
   .hero-portrait {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+  .hero-portrait-fallback,
+  .hero-portrait-canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+    }
+
+  .hero-portrait-fallback {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+
+  .hero-portrait-fallback--hidden {
+      opacity: 0;
+    }
+
+  .hero-portrait-canvas {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+  .hero-portrait-canvas--ready {
+      opacity: 1;
+    }
 
   .hero-about-label {
     margin-top: 42px;

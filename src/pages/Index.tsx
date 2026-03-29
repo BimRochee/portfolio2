@@ -145,12 +145,11 @@ const Index = () => {
   });
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPortraitSequenceReady, setIsPortraitSequenceReady] = useState(false);
+  const portraitCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const portraitImagesRef = useRef<HTMLImageElement[]>([]);
   const portraitAnimationFrameRef = useRef<number | null>(null);
   const portraitProgressRef = useRef(themeMode === "light" ? 1 : 0);
   const pendingPortraitTargetRef = useRef<number | null>(null);
-  const [portraitFrameIndex, setPortraitFrameIndex] = useState(() =>
-    themeMode === "light" ? Math.max(portraitFrames.length - 1, 0) : 0,
-  );
 
   const maxPortraitFrameIndex = useMemo(
     () => Math.max(portraitFrames.length - 1, 0),
@@ -164,10 +163,57 @@ const Index = () => {
     }
   };
 
+  const drawPortraitFrame = (frameIndex: number) => {
+    const canvas = portraitCanvasRef.current;
+    const image = portraitImagesRef.current[frameIndex];
+    if (!canvas || !image) {
+      return;
+    }
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return;
+    }
+
+    const bounds = canvas.getBoundingClientRect();
+    const renderWidth = Math.max(Math.round(bounds.width), 1);
+    const renderHeight = Math.max(Math.round(bounds.height), 1);
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const targetWidth = Math.max(Math.round(renderWidth * devicePixelRatio), 1);
+    const targetHeight = Math.max(Math.round(renderHeight * devicePixelRatio), 1);
+
+    if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+    }
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    const sourceAspectRatio = image.naturalWidth / image.naturalHeight;
+    const targetAspectRatio = canvas.width / canvas.height;
+
+    let drawWidth = canvas.width;
+    let drawHeight = canvas.height;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (sourceAspectRatio > targetAspectRatio) {
+      drawHeight = canvas.height;
+      drawWidth = drawHeight * sourceAspectRatio;
+      offsetX = (canvas.width - drawWidth) / 2;
+    } else {
+      drawWidth = canvas.width;
+      drawHeight = drawWidth / sourceAspectRatio;
+      offsetY = (canvas.height - drawHeight) / 2;
+    }
+
+    context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+  };
+
   const syncPortraitToProgress = (progress: number) => {
     const clampedProgress = Math.min(1, Math.max(0, progress));
     portraitProgressRef.current = clampedProgress;
-    setPortraitFrameIndex(Math.round(clampedProgress * maxPortraitFrameIndex));
+    drawPortraitFrame(Math.round(clampedProgress * maxPortraitFrameIndex));
   };
 
   const animatePortraitTo = (targetProgress: number) => {
@@ -208,25 +254,37 @@ const Index = () => {
     let cancelled = false;
 
     const preloadFrame = (src: string) =>
-      new Promise<void>((resolve) => {
+      new Promise<HTMLImageElement>((resolve) => {
         const image = new Image();
 
-        const finish = () => resolve();
+        const finish = async () => {
+          if (typeof image.decode === "function") {
+            try {
+              await image.decode();
+            } catch {
+              // Ignore decode failures and still use the loaded frame.
+            }
+          }
+
+          resolve(image);
+        };
+
         image.onload = finish;
-        image.onerror = finish;
+        image.onerror = () => resolve(image);
         image.decoding = "async";
         image.src = src;
 
         if (image.complete) {
-          resolve();
+          void finish();
         }
       });
 
-    Promise.all(portraitFrames.map((src) => preloadFrame(src))).then(() => {
+    Promise.all(portraitFrames.map((src) => preloadFrame(src))).then((images) => {
       if (cancelled) {
         return;
       }
 
+      portraitImagesRef.current = images;
       setIsPortraitSequenceReady(true);
     });
 
@@ -252,6 +310,24 @@ const Index = () => {
     pendingPortraitTargetRef.current = null;
     animatePortraitTo(queuedTarget ?? targetProgress);
   }, [isPortraitSequenceReady, themeMode]);
+
+  useEffect(() => {
+    if (!isPortraitSequenceReady) {
+      return;
+    }
+
+    syncPortraitToProgress(portraitProgressRef.current);
+
+    const handleResize = () => {
+      syncPortraitToProgress(portraitProgressRef.current);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isPortraitSequenceReady]);
 
   useEffect(() => {
     return () => {
@@ -325,9 +401,14 @@ const Index = () => {
                 <div>
                   <div className="hero-portrait-shell">
                     <img
-                      src={isPortraitSequenceReady ? portraitFrames[portraitFrameIndex] ?? portrait : portrait}
-                      className="hero-portrait"
-                      alt="Bim Rochee P. Agliam portrait transition"
+                      src={portrait}
+                      className={`hero-portrait hero-portrait-fallback${isPortraitSequenceReady ? " hero-portrait-fallback--hidden" : ""}`}
+                      alt="Bim Rochee P. Agliam portrait"
+                    />
+                    <canvas
+                      ref={portraitCanvasRef}
+                      className={`hero-portrait hero-portrait-canvas${isPortraitSequenceReady ? " hero-portrait-canvas--ready" : ""}`}
+                      aria-hidden="true"
                     />
                   </div>
                   <p className="hero-about-label">About</p>
