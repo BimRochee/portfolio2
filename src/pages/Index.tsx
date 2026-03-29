@@ -329,7 +329,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       <header className="resume-topbar">
         <div className="resume-topbar-inner">
-          <p className="resume-topbar-title">Bim Rochee&apos;s Resume</p>
+          <p className="resume-topbar-title">Bim Rochee&apos;s Portfolio</p>
           <div className="relative flex items-center gap-3">
             <button
               type="button"
