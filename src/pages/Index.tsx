@@ -144,8 +144,10 @@ const Index = () => {
     return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   });
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isPortraitSequenceReady, setIsPortraitSequenceReady] = useState(false);
   const portraitAnimationFrameRef = useRef<number | null>(null);
-  const portraitProgressRef = useRef(0);
+  const portraitProgressRef = useRef(themeMode === "light" ? 1 : 0);
+  const pendingPortraitTargetRef = useRef<number | null>(null);
   const [portraitFrameIndex, setPortraitFrameIndex] = useState(() =>
     themeMode === "light" ? Math.max(portraitFrames.length - 1, 0) : 0,
   );
@@ -203,14 +205,53 @@ const Index = () => {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
+    const preloadFrame = (src: string) =>
+      new Promise<void>((resolve) => {
+        const image = new Image();
+
+        const finish = () => resolve();
+        image.onload = finish;
+        image.onerror = finish;
+        image.decoding = "async";
+        image.src = src;
+
+        if (image.complete) {
+          resolve();
+        }
+      });
+
+    Promise.all(portraitFrames.map((src) => preloadFrame(src))).then(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setIsPortraitSequenceReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
     window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
   }, [themeMode]);
 
   useEffect(() => {
     const targetProgress = themeMode === "light" ? 1 : 0;
-    animatePortraitTo(targetProgress);
-  }, [themeMode]);
+
+    if (!isPortraitSequenceReady) {
+      pendingPortraitTargetRef.current = targetProgress;
+      return;
+    }
+
+    const queuedTarget = pendingPortraitTargetRef.current;
+    pendingPortraitTargetRef.current = null;
+    animatePortraitTo(queuedTarget ?? targetProgress);
+  }, [isPortraitSequenceReady, themeMode]);
 
   useEffect(() => {
     return () => {
@@ -284,7 +325,7 @@ const Index = () => {
                 <div>
                   <div className="hero-portrait-shell">
                     <img
-                      src={portraitFrames[portraitFrameIndex] ?? portrait}
+                      src={isPortraitSequenceReady ? portraitFrames[portraitFrameIndex] ?? portrait : portrait}
                       className="hero-portrait"
                       alt="Bim Rochee P. Agliam portrait transition"
                     />
