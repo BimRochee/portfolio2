@@ -26,13 +26,28 @@ const portraitFrames = Object.entries(portraitFrameModules)
   .sort(([pathA], [pathB]) => pathA.localeCompare(pathB, undefined, { numeric: true }))
   .map(([, src]) => src);
 
-const aboutDetails = [
-  "Mobile and Web",
-  "Developer",
-  "Based in Philippines",
-  "4+ Months of Industry",
-  "Experience",
-];
+const industryExperienceStartDate = new Date(2025, 10, 26);
+
+const getCompletedMonthsSince = (startDate: Date, currentDate: Date) => {
+  let completedMonths =
+    (currentDate.getFullYear() - startDate.getFullYear()) * 12
+    + (currentDate.getMonth() - startDate.getMonth());
+
+  if (currentDate.getDate() < startDate.getDate()) {
+    completedMonths -= 1;
+  }
+
+  return Math.max(completedMonths, 0);
+};
+
+const getNextMonthAnniversary = (startDate: Date, currentDate: Date) => {
+  const completedMonths = getCompletedMonthsSince(startDate, currentDate);
+  return new Date(
+    startDate.getFullYear(),
+    startDate.getMonth() + completedMonths + 1,
+    startDate.getDate(),
+  );
+};
 
 const proficiencies = [
   {
@@ -132,11 +147,25 @@ const Index = () => {
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPortraitSequenceReady, setIsPortraitSequenceReady] = useState(false);
+  const [industryExperienceMonths, setIndustryExperienceMonths] = useState(() =>
+    getCompletedMonthsSince(industryExperienceStartDate, new Date()),
+  );
   const portraitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const portraitImagesRef = useRef<HTMLImageElement[]>([]);
   const portraitAnimationFrameRef = useRef<number | null>(null);
   const portraitProgressRef = useRef(themeMode === "light" ? 1 : 0);
   const pendingPortraitTargetRef = useRef<number | null>(null);
+
+  const aboutDetails = useMemo(
+    () => [
+      "Mobile and Web",
+      "Developer",
+      "Based in Philippines",
+      `${industryExperienceMonths} ${industryExperienceMonths === 1 ? "Month" : "Months"} of Industry`,
+      "Experience",
+    ],
+    [industryExperienceMonths],
+  );
 
   const maxPortraitFrameIndex = useMemo(
     () => Math.max(portraitFrames.length - 1, 0),
@@ -283,6 +312,20 @@ const Index = () => {
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
   }, [themeMode]);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const nextMonthAnniversary = getNextMonthAnniversary(industryExperienceStartDate, currentDate);
+    const timeoutMs = Math.max(nextMonthAnniversary.getTime() - currentDate.getTime(), 0);
+
+    const timeoutId = window.setTimeout(() => {
+      setIndustryExperienceMonths(getCompletedMonthsSince(industryExperienceStartDate, new Date()));
+    }, timeoutMs + 1000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [industryExperienceMonths]);
 
   useEffect(() => {
     const targetProgress = themeMode === "light" ? 1 : 0;
