@@ -55,6 +55,10 @@
     --ui-badge-bg: #5d4735;
     --ui-badge-fg: #efc89c;
     --ui-icon: rgba(255, 255, 255, 0.3);
+    --ui-scroll-fill-strong: rgba(255, 255, 255, 0.82);
+    --ui-scroll-fill-soft: rgba(255, 255, 255, 0.28);
+    --ui-scroll-stop: rgba(255, 255, 255, 0.18);
+    --ui-scroll-glow: rgba(255, 255, 255, 0.2);
     color-scheme: dark;
   }
 
@@ -97,6 +101,10 @@
     --ui-badge-bg: #e7d2bb;
     --ui-badge-fg: #7c5937;
     --ui-icon: rgba(41, 53, 72, 0.35);
+    --ui-scroll-fill-strong: rgba(24, 32, 44, 0.78);
+    --ui-scroll-fill-soft: rgba(24, 32, 44, 0.2);
+    --ui-scroll-stop: rgba(24, 32, 44, 0.16);
+    --ui-scroll-glow: rgba(24, 32, 44, 0.16);
     color-scheme: light;
   }
 }
@@ -160,7 +168,13 @@
   }
 
   .resume-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
     border-bottom: 1px solid var(--ui-line);
+    background: hsl(var(--background) / 0.84);
+    backdrop-filter: blur(16px);
+    overflow: visible;
   }
 
   .resume-topbar-inner {
@@ -229,6 +243,84 @@
 
   .resume-menu-link:hover {
     color: var(--ui-text);
+  }
+
+  .resume-scroll-progress {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    pointer-events: none;
+  }
+
+  .resume-scroll-progress-inner {
+    --scroll-indicator-duration: 140ms;
+    width: min(928px, calc(100% - 64px));
+    margin: 0 auto;
+    position: relative;
+    height: 1px;
+  }
+
+  .resume-scroll-progress-track {
+    position: relative;
+    height: 1px;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .resume-scroll-progress-fill {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    background: linear-gradient(90deg, var(--ui-scroll-fill-strong), var(--ui-scroll-fill-soft));
+    transition: transform var(--scroll-indicator-duration) cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .resume-scroll-progress-glow {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: radial-gradient(circle, var(--ui-scroll-glow) 0%, transparent 72%);
+    transition: left var(--scroll-indicator-duration) cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+
+  .resume-scroll-progress-stop {
+    position: absolute;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: var(--ui-scroll-stop);
+    transition:
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .resume-scroll-progress-stop--active {
+    background: var(--ui-scroll-fill-strong);
+    box-shadow: 0 0 0 5px var(--ui-scroll-glow);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .resume-scroll-progress-label {
+    position: absolute;
+    top: 12px;
+    font-size: 8px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ui-text-muted);
+    white-space: nowrap;
+    transform: translateX(-50%);
+    transition:
+      left var(--scroll-indicator-duration) cubic-bezier(0.22, 1, 0.36, 1),
+      transform var(--scroll-indicator-duration) cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .hero-frame {
@@ -378,6 +470,11 @@
     grid-template-columns: 220px 1fr;
     column-gap: 46px;
     align-items: stretch;
+  }
+
+  .hero-frame,
+  .resume-section {
+    scroll-margin-top: 132px;
   }
 
   .resume-section-title-track {
@@ -780,6 +877,10 @@
     padding: 14px 0;
   }
 
+  .resume-scroll-progress-inner {
+    width: calc(100% - 32px);
+  }
+
   .hero-frame {
     width: 100%;
     min-height: auto;
@@ -927,6 +1028,14 @@
     grid-template-columns: 1fr;
     row-gap: 18px;
     align-items: start;
+  }
+
+  .resume-scroll-progress-inner {
+  }
+
+  .resume-scroll-progress-label {
+    top: 10px;
+    font-size: 7px;
   }
 
   .section-gap-proficiencies,

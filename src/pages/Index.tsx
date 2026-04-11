@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -120,6 +120,15 @@ const projects = [
   },
 ];
 
+const scrollSections = [
+  { id: "about", label: "About" },
+  { id: "proficiencies", label: "Proficiencies" },
+  { id: "work", label: "Work" },
+  { id: "education", label: "Education" },
+  { id: "projects", label: "Projects" },
+  { id: "contact", label: "Contact" },
+];
+
 type SectionProps = {
   id: string;
   title: string;
@@ -150,11 +159,18 @@ const Index = () => {
   const [industryExperienceMonths, setIndustryExperienceMonths] = useState(() =>
     getCompletedMonthsSince(industryExperienceStartDate, new Date()),
   );
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSectionId, setActiveSectionId] = useState(scrollSections[0].id);
+  const [scrollIndicatorTransitionMs, setScrollIndicatorTransitionMs] = useState(140);
   const portraitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const portraitImagesRef = useRef<HTMLImageElement[]>([]);
   const portraitAnimationFrameRef = useRef<number | null>(null);
   const portraitProgressRef = useRef(themeMode === "light" ? 1 : 0);
   const pendingPortraitTargetRef = useRef<number | null>(null);
+  const lastScrollSampleRef = useRef({
+    scrollY: 0,
+    timestamp: 0,
+  });
 
   const aboutDetails = useMemo(
     () => [
@@ -171,6 +187,19 @@ const Index = () => {
     () => Math.max(portraitFrames.length - 1, 0),
     [],
   );
+
+  const activeSectionLabel = useMemo(
+    () => scrollSections.find((section) => section.id === activeSectionId)?.label ?? scrollSections[0].label,
+    [activeSectionId],
+  );
+
+  const scrollIndicatorProgress = Math.min(Math.max(scrollProgress, 0), 1);
+  const scrollLabelPosition = scrollIndicatorProgress * 100;
+  const activeSectionLabelTransform = scrollIndicatorProgress <= 0.04
+    ? "translateX(0)"
+    : scrollIndicatorProgress >= 0.96
+      ? "translateX(-100%)"
+      : "translateX(-50%)";
 
   const cancelPortraitAnimation = () => {
     if (portraitAnimationFrameRef.current !== null) {
@@ -314,6 +343,80 @@ const Index = () => {
   }, [themeMode]);
 
   useEffect(() => {
+    let animationFrameId: number | null = null;
+
+    const updateScrollIndicator = () => {
+      animationFrameId = null;
+      const timestamp = performance.now();
+
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const nextScrollProgress = scrollableHeight > 0
+        ? Number((window.scrollY / scrollableHeight).toFixed(4))
+        : 0;
+      const deltaScrollY = Math.abs(window.scrollY - lastScrollSampleRef.current.scrollY);
+      const deltaTime = Math.max(timestamp - lastScrollSampleRef.current.timestamp, 1);
+      const scrollVelocity = deltaScrollY / deltaTime;
+      const anchorPosition = window.scrollY + window.innerHeight * 0.32;
+      const speedFactor = Math.min(scrollVelocity / 2.4, 1);
+      const nextTransitionMs = Math.round(160 - speedFactor * 120);
+
+      let nextActiveSectionId = scrollSections[0].id;
+
+      for (const section of scrollSections) {
+        const sectionElement = document.getElementById(section.id);
+
+        if (!sectionElement) {
+          continue;
+        }
+
+        if (anchorPosition >= sectionElement.offsetTop) {
+          nextActiveSectionId = section.id;
+        }
+      }
+
+      setScrollProgress(nextScrollProgress);
+      setScrollIndicatorTransitionMs((currentDuration) => (
+        Math.abs(currentDuration - nextTransitionMs) >= 8 ? nextTransitionMs : currentDuration
+      ));
+      setActiveSectionId((currentSectionId) => (
+        currentSectionId === nextActiveSectionId ? currentSectionId : nextActiveSectionId
+      ));
+
+      lastScrollSampleRef.current = {
+        scrollY: window.scrollY,
+        timestamp,
+      };
+    };
+
+    const requestScrollIndicatorUpdate = () => {
+      if (animationFrameId !== null) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(updateScrollIndicator);
+    };
+
+    lastScrollSampleRef.current = {
+      scrollY: window.scrollY,
+      timestamp: performance.now(),
+    };
+
+    requestScrollIndicatorUpdate();
+
+    window.addEventListener("scroll", requestScrollIndicatorUpdate, { passive: true });
+    window.addEventListener("resize", requestScrollIndicatorUpdate);
+
+    return () => {
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+
+      window.removeEventListener("scroll", requestScrollIndicatorUpdate);
+      window.removeEventListener("resize", requestScrollIndicatorUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
     const currentDate = new Date();
     const nextMonthAnniversary = getNextMonthAnniversary(industryExperienceStartDate, currentDate);
     const timeoutMs = Math.max(nextMonthAnniversary.getTime() - currentDate.getTime(), 0);
@@ -408,6 +511,41 @@ const Index = () => {
                 </div>
               </nav>
             )}
+          </div>
+        </div>
+        <div className="resume-scroll-progress" aria-hidden="true">
+          <div
+            className="resume-scroll-progress-inner"
+            style={{ "--scroll-indicator-duration": `${scrollIndicatorTransitionMs}ms` } as CSSProperties}
+          >
+            <div className="resume-scroll-progress-track">
+              <span
+                className="resume-scroll-progress-fill"
+                style={{ transform: `scaleX(${scrollIndicatorProgress})` }}
+              />
+              <span
+                className="resume-scroll-progress-glow"
+                style={{ left: `calc(${scrollIndicatorProgress * 100}% - 12px)` }}
+              />
+              {scrollSections.map((section, index) => (
+                <span
+                  key={section.id}
+                  className={`resume-scroll-progress-stop${activeSectionId === section.id ? " resume-scroll-progress-stop--active" : ""}`}
+                  style={{
+                    left: `${(index / Math.max(scrollSections.length - 1, 1)) * 100}%`,
+                  }}
+                />
+              ))}
+            </div>
+            <p
+              className="resume-scroll-progress-label"
+              style={{
+                left: `${scrollLabelPosition}%`,
+                transform: activeSectionLabelTransform,
+              }}
+            >
+              {activeSectionLabel}
+            </p>
           </div>
         </div>
       </header>
