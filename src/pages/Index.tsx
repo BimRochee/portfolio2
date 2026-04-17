@@ -22,6 +22,8 @@ import tracoIconLight from "@/assets/traco-icon(light mode).png";
 import bumblebeeIcon from "@/assets/bumblebee-icon.png";
 import payvaultIcon from "@/assets/payvault-icon.png";
 import rahikeIcon from "@/assets/rahike-icon.png";
+import { GravityStarsBackground } from "@/components/GravityStarsBackground";
+import { StarsBackground } from "@/components/StarsBackground";
 
 const portraitFrameModules = import.meta.glob("../assets/bim-portraitVideo/*.jpg", {
   eager: true,
@@ -585,85 +587,96 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="resume-topbar">
-        <div className="resume-topbar-inner">
-          <p className="resume-topbar-title">Bim Rochee&apos;s Portfolio</p>
-          <div className="relative flex items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="theme-toggle-button"
-              aria-label={`Switch to ${themeMode === "dark" ? "light" : "dark"} mode`}
-            >
-              {themeMode === "dark" ? <SunMedium className="h-3.5 w-3.5" strokeWidth={1.8} /> : <MoonStar className="h-3.5 w-3.5" strokeWidth={1.8} />}
-              <span>{themeMode === "dark" ? "Light" : "Dark"}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              className="resume-menu-button"
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <X className="h-3.5 w-3.5" strokeWidth={1.8} /> : <Menu className="h-3.5 w-3.5" strokeWidth={1.8} />}
-              <span>Menu</span>
-            </button>
-            {menuOpen && (
-              <nav className="resume-menu-popover">
-                <div className="flex flex-col gap-2">
-                  {scrollSections.map((item) => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      onClick={() => setMenuOpen(false)}
-                      className="resume-menu-link"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
-              </nav>
-            )}
-          </div>
-        </div>
-        <div className="resume-scroll-progress" aria-hidden="true">
-          <div
-            className="resume-scroll-progress-inner"
-            style={{ "--scroll-indicator-duration": `${scrollIndicatorTransitionMs}ms` } as CSSProperties}
-          >
-            <div className="resume-scroll-progress-track">
-              <span
-                className="resume-scroll-progress-fill"
-                style={{ transform: `scaleX(${scrollIndicatorProgress})` }}
-              />
-              <span
-                className="resume-scroll-progress-glow"
-                style={{ left: `calc(${scrollIndicatorProgress * 100}% - 12px)` }}
-              />
-              {scrollSections.map((section, index) => (
-                <span
-                  key={section.id}
-                  className={`resume-scroll-progress-stop${activeSectionId === section.id ? " resume-scroll-progress-stop--active" : ""}`}
-                  style={{
-                    left: `${(index / Math.max(scrollSections.length - 1, 1)) * 100}%`,
-                  }}
-                />
-              ))}
-            </div>
-            <p
-              className="resume-scroll-progress-label"
-              style={{
-                left: `${scrollLabelPosition}%`,
-                transform: activeSectionLabelTransform,
-              }}
-            >
-              {activeSectionLabel}
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="relative isolate min-h-screen overflow-hidden bg-background text-foreground">
+      <StarsBackground
+        aria-hidden="true"
+        starColor={themeMode === "dark" ? "rgba(255, 255, 255, 0.92)" : "rgba(20, 28, 40, 0.62)"}
+        className={`portfolio-stars-background${themeMode === "dark" ? "" : " portfolio-stars-background--hidden"}`}
+      />
+      <GravityStarsBackground
+        aria-hidden="true"
+        className={`portfolio-gravity-background${themeMode === "light" ? "" : " portfolio-gravity-background--hidden"}`}
+      />
 
-      <main className="mx-auto max-w-[58rem] px-5 pb-12 pt-10 md:px-8 md:pb-14 md:pt-14">
+      <div className="relative z-10">
+        <header className="resume-topbar">
+          <div className="resume-topbar-inner">
+            <p className="resume-topbar-title">Bim Rochee&apos;s Portfolio</p>
+            <div className="relative flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="theme-toggle-button"
+                aria-label={`Switch to ${themeMode === "dark" ? "light" : "dark"} mode`}
+              >
+                {themeMode === "dark" ? <SunMedium className="h-3.5 w-3.5" strokeWidth={1.8} /> : <MoonStar className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                <span>{themeMode === "dark" ? "Light" : "Dark"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((open) => !open)}
+                className="resume-menu-button"
+                aria-expanded={menuOpen}
+              >
+                {menuOpen ? <X className="h-3.5 w-3.5" strokeWidth={1.8} /> : <Menu className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                <span>Menu</span>
+              </button>
+              {menuOpen && (
+                <nav className="resume-menu-popover">
+                  <div className="flex flex-col gap-2">
+                    {scrollSections.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        onClick={() => setMenuOpen(false)}
+                        className="resume-menu-link"
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </nav>
+              )}
+            </div>
+          </div>
+          <div className="resume-scroll-progress" aria-hidden="true">
+            <div
+              className="resume-scroll-progress-inner"
+              style={{ "--scroll-indicator-duration": `${scrollIndicatorTransitionMs}ms` } as CSSProperties}
+            >
+              <div className="resume-scroll-progress-track">
+                <span
+                  className="resume-scroll-progress-fill"
+                  style={{ transform: `scaleX(${scrollIndicatorProgress})` }}
+                />
+                <span
+                  className="resume-scroll-progress-glow"
+                  style={{ left: `calc(${scrollIndicatorProgress * 100}% - 12px)` }}
+                />
+                {scrollSections.map((section, index) => (
+                  <span
+                    key={section.id}
+                    className={`resume-scroll-progress-stop${activeSectionId === section.id ? " resume-scroll-progress-stop--active" : ""}`}
+                    style={{
+                      left: `${(index / Math.max(scrollSections.length - 1, 1)) * 100}%`,
+                    }}
+                  />
+                ))}
+              </div>
+              <p
+                className="resume-scroll-progress-label"
+                style={{
+                  left: `${scrollLabelPosition}%`,
+                  transform: activeSectionLabelTransform,
+                }}
+              >
+                {activeSectionLabel}
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-[58rem] px-5 pb-12 pt-10 md:px-8 md:pb-14 md:pt-14">
         <section id="about" className="hero-frame">
           <div className="hero-title-wrap">
             <h1 className="hero-title">
@@ -985,7 +998,8 @@ const Index = () => {
             <span>Available for product-focused freelance and engineering work.</span>
           </div>
         </footer>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
