@@ -20,6 +20,8 @@ import traksIcon from "@/assets/traks-icon.png";
 import tracoIcon from "@/assets/traco-icon.png";
 import tracoIconLight from "@/assets/traco-icon(light mode).png";
 import bumblebeeIcon from "@/assets/bumblebee-icon.png";
+import payvaultIcon from "@/assets/payvault-icon.png";
+import rahikeIcon from "@/assets/rahike-icon.png";
 
 const portraitFrameModules = import.meta.glob("../assets/bim-portraitVideo/*.jpg", {
   eager: true,
@@ -61,10 +63,14 @@ const workItems = [
     company: "Hyper Access",
     location: "Philippines",
     summary:
-      "Build and maintain production web features, translate requirements into implementation details, and improve user-facing workflows across client work.",
+      "Contributed to production web systems by implementing feature updates and workflow improvements based on structured GAP analysis documents. Translated business requirements into functional UI behavior, integrated with existing backend services, and ensured system reliability across real-world use cases, leveraging AI-assisted development to accelerate delivery.",
     highlights: [
-      "Implemented frontend and backend changes in live systems instead of isolated demos or coursework.",
-      "Worked through real delivery constraints, including existing codebases, changing requirements, and practical handoff needs.",
+      "Implemented frontend features and workflow updates by aligning UI behavior with defined GAP analysis and business process flows.",
+      "Integrated and consumed existing backend APIs to support new and updated system functionality.",
+      "Reused and extended existing UI components, improving performance, usability, and consistency across the application.",
+      "Debugged and maintained features within a shared production codebase, ensuring stability under real-world constraints.",
+      "Leveraged AI-assisted tools to accelerate development, code iteration, and problem-solving while maintaining code quality.",
+      "Worked within evolving requirements, existing architecture, and cross-team handoffs in a production environment.",
     ],
   },
   {
@@ -133,6 +139,28 @@ const flagshipProject = {
 };
 
 const supportingProjects = [
+  {
+    name: "RaHike",
+    subtitle: "Outdoor trail and hike companion",
+    icon: rahikeIcon,
+    overview:
+      "Built as a hiking companion focused on trail discovery, live tracking, and progress-driven outdoor exploration across curated routes, climb stats, and achievement-style momentum.",
+    impact:
+      "Packages trail exploration, live hike tracking, and long-term outdoor progress into one mobile experience designed to feel premium and motivating.",
+    tags: ["React Native", "Expo Router", "Live tracking", "Product design"],
+    note: "Releasing soon",
+  },
+  {
+    name: "PayVault",
+    subtitle: "Private salary record vault",
+    icon: payvaultIcon,
+    overview:
+      "Built as a privacy-first salary tracker for a real payday workflow: record the amount received first, complete the payslip breakdown later, and keep everything secured on-device with PIN and optional biometrics.",
+    impact:
+      "Turns a messy real-life payroll habit into a structured mobile flow with local history, analytics, JSON backup and restore, and CSV export.",
+    tags: ["React Native", "Local-first", "Biometrics", "Export tools"],
+    note: "Releasing soon",
+  },
   {
     name: "Traks",
     subtitle: "Tourism tracking and reporting",
@@ -747,14 +775,9 @@ const Index = () => {
 
               <div className="projects-stack">
                 <div className="projects-list">
-                  {supportingProjects.map((project) => (
-                    <a
-                      key={project.name}
-                      href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="project-card"
-                    >
+                  {supportingProjects.map((project) => {
+                    const cardContent = (
+                      <>
                       <div className="project-card-header">
                         <div className="project-card-main">
                           <img
@@ -767,7 +790,7 @@ const Index = () => {
                             <p className="project-card-subtitle">{project.subtitle}</p>
                           </div>
                         </div>
-                        <ArrowUpRight className="project-card-arrow" strokeWidth={1.8} />
+                        {project.href ? <ArrowUpRight className="project-card-arrow" strokeWidth={1.8} /> : null}
                       </div>
                       <p className="project-card-overview">{project.overview}</p>
                       <p className="project-card-impact">{project.impact}</p>
@@ -778,8 +801,33 @@ const Index = () => {
                           </span>
                         ))}
                       </div>
-                    </a>
-                  ))}
+                      {project.note ? <p className="project-card-note">{project.note}</p> : null}
+                      </>
+                    );
+
+                    if (project.href) {
+                      return (
+                        <a
+                          key={project.name}
+                          href={project.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="project-card"
+                        >
+                          {cardContent}
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <article
+                        key={project.name}
+                        className="project-card project-card--static"
+                      >
+                        {cardContent}
+                      </article>
+                    );
+                  })}
                 </div>
               </div>
             </div>
