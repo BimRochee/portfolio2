@@ -2,13 +2,17 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import {
   ArrowRight,
   ArrowUpRight,
+  BrainCircuit,
   Briefcase,
   Calendar,
+  Database,
   GraduationCap,
   MapPin,
   Menu,
   MoonStar,
+  Smartphone,
   SunMedium,
+  WifiOff,
   X,
 } from "lucide-react";
 import portrait from "@/assets/bim-portrait.jpg";
@@ -49,25 +53,6 @@ const getNextMonthAnniversary = (startDate: Date, currentDate: Date) => {
   );
 };
 
-const proficiencies = [
-  {
-    label: "Skills",
-    items: ["API Integration", "Frontend Architecture", "Backend Logic", "UX and Layout"],
-  },
-  {
-    label: "Tools",
-    items: ["VS Code", "Figma", "Postman", "Notion", "Ai Tools"],
-  },
-  {
-    label: "Tech Stack",
-    items: ["React", "Php", "C#", "React Native", "JavaScript", "Dart", "SQL"],
-  },
-  {
-    label: "Spoken Languages",
-    items: ["English", "Tagalog", "Bisaya"],
-  },
-];
-
 const workItems = [
   {
     title: "Web Developer",
@@ -75,8 +60,12 @@ const workItems = [
     period: "2025 - Now",
     company: "Hyper Access",
     location: "Philippines",
-    description:
-      "At Hyper Access Solutions, I strengthened my foundation, and core software development practices through hands-on experience.",
+    summary:
+      "Build and maintain production web features, translate requirements into implementation details, and improve user-facing workflows across client work.",
+    highlights: [
+      "Implemented frontend and backend changes in live systems instead of isolated demos or coursework.",
+      "Worked through real delivery constraints, including existing codebases, changing requirements, and practical handoff needs.",
+    ],
   },
   {
     title: "Freelance Developer",
@@ -84,8 +73,12 @@ const workItems = [
     period: "2024 - Now",
     company: "Freelance",
     location: "Philippines",
-    description:
-      "As a freelance developer, I design and develop custom systems across web and mobile platforms, delivering solutions tailored to client requirements.",
+    summary:
+      "Design and ship custom mobile and web systems with a focus on usable flows, clear data models, and solutions that match real client operations.",
+    highlights: [
+      "Scoped features from business needs, then translated them into concrete interfaces, logic, and database-backed workflows.",
+      "Took ownership from initial structure through implementation, iteration, and client-facing adjustments.",
+    ],
   },
   {
     title: "Internship",
@@ -93,39 +86,131 @@ const workItems = [
     period: "2024 - 2025",
     company: "DOST-PCAARRD",
     location: "Philippines",
-    description:
-      "During my internship under a DOST-PCAARRD project, I worked as a full-stack developer for a cacao traceability system, building backend components while also assisting in training end-users on system adoption.",
+    summary:
+      "Contributed to a cacao traceability system used in a real agricultural workflow, covering backend implementation, mobile support, and end-user adoption.",
+    highlights: [
+      "Helped shape a system where data quality, traceability, and field usability mattered more than a polished demo.",
+      "Supported onboarding and training, which improved how I design software for people who need clarity and reliability first.",
+    ],
   },
 ];
 
-const projects = [
+const flagshipProject = {
+  name: "BumbleBee",
+  subtitle: "Offline-first training system",
+  icon: bumblebeeIcon,
+  status: "Preparing for release",
+  summary:
+    "BumbleBee is my flagship project: a workout planning system designed to keep working in real training conditions, with guided plan generation, structured progression, and logic that stays useful even when connectivity is unreliable.",
+  details: [
+    {
+      title: "Problem",
+      description:
+        "Most fitness apps assume stable internet, generic templates, or manual planning. I wanted a system that could adapt to user constraints while staying dependable during actual workouts.",
+    },
+    {
+      title: "System Design",
+      description:
+        "I structured the product around offline-first data access, deterministic progression rules, and AI-assisted planning where guidance helps the user without making the experience unpredictable.",
+    },
+    {
+      title: "Why It Matters",
+      description:
+        "The result is a product that reduces planning friction, supports decision-making in context, and treats reliability as a feature instead of an afterthought.",
+    },
+  ],
+  signals: [
+    "Offline-first workflow support",
+    "AI-assisted plan generation",
+    "Rule-based progression logic",
+    "Mobile-first product design",
+  ],
+  metrics: [
+    "Keeps core planning workflows usable without internet",
+    "Turns broad user constraints into structured workout recommendations",
+    "Balances deterministic system logic with assisted guidance",
+  ],
+};
+
+const supportingProjects = [
   {
     name: "Traks",
-    subtitle: "Tourist Tracker",
+    subtitle: "Tourism tracking and reporting",
     icon: traksIcon,
+    overview:
+      "Built as a full-stack capstone system for tourism operations, with real-time alerts, reporting flows, and onboarding paths that make tracking activity easier for teams on the ground.",
+    impact:
+      "Reduced manual monitoring steps and made location-based updates easier to review and act on.",
+    tags: ["Full-stack", "Real-time alerts", "Reporting", "Onboarding"],
     href: "https://drive.google.com/drive/u/0/folders/1ZKQQNe7yk_EQnFMBiuqjVKWRkr4fwyGp?fbclid=IwY2xjawKJLetleHRuA2FlbQIxMABicmlkETFXRUhHZ01kbVNRRDJKRkI2AR45IWSAklKZxh4AYyBMoy3UZAGKBu0nakxquSFGpS8wkX9Fwr6FT7sQohwtvw_aem_Am2PyZHQu6eeo0isMtmuUA",
   },
   {
     name: "Traco",
-    subtitle: "Cacao Traceability",
+    subtitle: "Cacao traceability workflow",
     icon: tracoIcon,
     lightIcon: tracoIconLight,
+    overview:
+      "Supported a traceability system for cacao workflows where consistent records, operational clarity, and adoption by real users mattered more than a portfolio-friendly demo.",
+    impact:
+      "Improved traceability flow by organizing backend-backed records and making field processes easier to follow and explain.",
+    tags: ["Traceability", "Backend logic", "Field workflow", "System adoption"],
     href: "https://drive.google.com/file/d/1yfkAcxMFBXaXA50rj5AQlHkrmXD0lrWT/view?fbclid=IwY2xjawLdx6BleHRuA2FlbQIxMABicmlkETFLaTBUdmlHZXlTMkdDU0lsAR4mGNYKRxkpKjYuDDEy0YgC656KhZczBP-KaIYz4v391ZzJsz__Cg2dcAq7eQ_aem_mKxicc3co5B-Ojy-06q-Lg",
   },
+];
+
+const approachItems = [
   {
-    name: "BumbleBee",
-    subtitle: "Smart Gym Guide",
-    icon: bumblebeeIcon,
-    status: "Releasing Soon",
+    title: "Design for real usage, not ideal conditions",
+    description:
+      "I pay attention to weak connectivity, user interruptions, and practical constraints because systems should stay helpful outside perfect demo environments.",
+  },
+  {
+    title: "Use structure before complexity",
+    description:
+      "When a product needs guidance, I prefer clear rules, strong data models, and predictable behavior before adding heavier automation.",
+  },
+  {
+    title: "Make tradeoffs visible",
+    description:
+      "I like systems where the reasoning behind the architecture is clear: what stays local, what syncs later, and where assistance should remain explainable.",
+  },
+];
+
+const stackItems = [
+  {
+    icon: Smartphone,
+    title: "React Native",
+    description:
+      "My default choice when I want to move quickly across platforms while still shaping a mobile-first product experience around real user flows.",
+  },
+  {
+    icon: WifiOff,
+    title: "Local-first persistence",
+    description:
+      "I reach for local storage and offline-friendly state when the product has to remain useful during interruptions, poor signal, or field usage.",
+  },
+  {
+    icon: Database,
+    title: "Backend and data modeling",
+    description:
+      "I care about clean records, predictable relationships, and structures that make reporting, traceability, or progression logic easier to maintain.",
+  },
+  {
+    icon: BrainCircuit,
+    title: "AI with guardrails",
+    description:
+      "I use AI where it improves guidance or planning, but I pair it with product constraints and deterministic logic so the outcome stays understandable.",
   },
 ];
 
 const scrollSections = [
   { id: "about", label: "About" },
-  { id: "proficiencies", label: "Proficiencies" },
-  { id: "work", label: "Work" },
-  { id: "education", label: "Education" },
+  { id: "flagship", label: "BumbleBee" },
   { id: "projects", label: "Projects" },
+  { id: "work", label: "Work" },
+  { id: "approach", label: "Approach" },
+  { id: "stack", label: "Stack" },
+  { id: "education", label: "Education" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -174,11 +259,11 @@ const Index = () => {
 
   const aboutDetails = useMemo(
     () => [
-      "Mobile and Web",
-      "Developer",
+      "Offline-first mobile systems",
+      "AI-assisted product logic",
+      "React Native, web, and backend",
       "Based in Philippines",
-      `${industryExperienceMonths} ${industryExperienceMonths === 1 ? "Month" : "Months"} of Industry`,
-      "Experience",
+      `${industryExperienceMonths} ${industryExperienceMonths === 1 ? "Month" : "Months"} in industry`,
     ],
     [industryExperienceMonths],
   );
@@ -498,14 +583,14 @@ const Index = () => {
             {menuOpen && (
               <nav className="resume-menu-popover">
                 <div className="flex flex-col gap-2">
-                  {["about", "proficiencies", "work", "education", "projects", "contact"].map((item) => (
+                  {scrollSections.map((item) => (
                     <a
-                      key={item}
-                      href={`#${item}`}
+                      key={item.id}
+                      href={`#${item.id}`}
                       onClick={() => setMenuOpen(false)}
                       className="resume-menu-link"
                     >
-                      {item[0].toUpperCase() + item.slice(1)}
+                      {item.label}
                     </a>
                   ))}
                 </div>
@@ -590,30 +675,113 @@ const Index = () => {
 
               <div className="hero-divider" />
 
-              <p className="hero-summary">
-                When I&apos;m not coding, you&apos;ll find me on the badminton court, gym, pool table, basketball
-                court, or frisbee field.
-              </p>
+              <div className="hero-summary">
+                <p>
+                  I build mobile and web products that stay useful in real-world conditions, from low-connectivity
+                  workflows to guided user decisions shaped by structured system logic.
+                </p>
+                <p className="hero-proof">
+                  Selected work includes tourism tracking, cacao traceability, and BumbleBee, an offline-first
+                  training system with AI-assisted planning and progression rules.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
         <div className="mt-14 md:mt-16">
-          <Section id="proficiencies" title="Proficiencies" className="section-gap-proficiencies">
-            <div className="proficiencies-panel">
-              {proficiencies.map((group, index) => (
-                <div
-                  key={group.label}
-                  className={`proficiencies-row ${index < proficiencies.length - 1 ? "proficiencies-row--divided" : ""}`}
-                >
-                  <p className="proficiencies-label">{group.label}</p>
-                  <div className="proficiencies-items">
-                    {group.items.map((item) => (
-                      <p key={item}>{item}</p>
-                    ))}
+          <section id="flagship" className="flagship-section">
+            <div className="flagship-heading">
+              <p className="flagship-label">Flagship Project</p>
+              <h2 className="flagship-title">BumbleBee</h2>
+            </div>
+
+            <article className="flagship-card">
+              <div className="flagship-topbar">
+                <div className="flagship-identity">
+                  <img src={flagshipProject.icon} alt={flagshipProject.name} className="flagship-icon" />
+                  <div>
+                    <p className="flagship-name">{flagshipProject.name}</p>
+                    <p className="flagship-subtitle">{flagshipProject.subtitle}</p>
                   </div>
                 </div>
-              ))}
+                <span className="flagship-status">{flagshipProject.status}</span>
+              </div>
+
+              <p className="flagship-summary">{flagshipProject.summary}</p>
+
+              <div className="flagship-signals">
+                {flagshipProject.signals.map((signal) => (
+                  <span key={signal} className="flagship-signal">
+                    {signal}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flagship-details">
+                {flagshipProject.details.map((detail) => (
+                  <div key={detail.title} className="flagship-detail-card">
+                    <p className="flagship-detail-title">{detail.title}</p>
+                    <p className="flagship-detail-description">{detail.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flagship-impact">
+                <p className="flagship-impact-title">What this proves</p>
+                <div className="flagship-impact-list">
+                  {flagshipProject.metrics.map((metric) => (
+                    <p key={metric}>{metric}</p>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <Section id="projects" title="Projects" className="section-gap-projects">
+            <div className="projects-panel">
+              <div
+                aria-hidden="true"
+                className="projects-grid"
+              />
+
+              <div className="projects-stack">
+                <div className="projects-list">
+                  {supportingProjects.map((project) => (
+                    <a
+                      key={project.name}
+                      href={project.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="project-card"
+                    >
+                      <div className="project-card-header">
+                        <div className="project-card-main">
+                          <img
+                            src={themeMode === "light" && project.lightIcon ? project.lightIcon : project.icon}
+                            alt={project.name}
+                            className="project-card-icon"
+                          />
+                          <div>
+                            <p className="project-card-title">{project.name}</p>
+                            <p className="project-card-subtitle">{project.subtitle}</p>
+                          </div>
+                        </div>
+                        <ArrowUpRight className="project-card-arrow" strokeWidth={1.8} />
+                      </div>
+                      <p className="project-card-overview">{project.overview}</p>
+                      <p className="project-card-impact">{project.impact}</p>
+                      <div className="project-card-tags">
+                        {project.tags.map((tag) => (
+                          <span key={tag} className="project-card-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           </Section>
 
@@ -648,11 +816,48 @@ const Index = () => {
                     </span>
                   </div>
 
-                  <p className="work-description">
-                    {item.description}
-                  </p>
+                  <p className="work-description">{item.summary}</p>
+                  <div className="work-highlights">
+                    {item.highlights.map((highlight) => (
+                      <p key={highlight}>{highlight}</p>
+                    ))}
+                  </div>
                 </article>
               ))}
+            </div>
+          </Section>
+
+          <Section id="approach" title="How I Think" className="section-gap-approach">
+            <div className="approach-panel">
+              {approachItems.map((item, index) => (
+                <article
+                  key={item.title}
+                  className={`approach-item ${index < approachItems.length - 1 ? "approach-item--divided" : ""}`}
+                >
+                  <h3 className="approach-title">{item.title}</h3>
+                  <p className="approach-description">{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </Section>
+
+          <Section id="stack" title="Stack" className="section-gap-stack">
+            <div className="stack-panel">
+              {stackItems.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <article key={item.title} className="stack-card">
+                    <div className="stack-card-header">
+                      <span className="stack-icon-shell">
+                        <Icon className="h-4 w-4" strokeWidth={1.8} />
+                      </span>
+                      <h3 className="stack-card-title">{item.title}</h3>
+                    </div>
+                    <p className="stack-card-description">{item.description}</p>
+                  </article>
+                );
+              })}
             </div>
           </Section>
 
@@ -661,7 +866,7 @@ const Index = () => {
               <article className="education-item">
                 <div className="education-heading-row">
                   <h3 className="education-title">BS in Information Technology</h3>
-                  <span className="education-badge">Highest</span>
+                  <span className="education-badge">Cum Laude</span>
                 </div>
 
                 <div className="education-meta-row">
@@ -680,79 +885,25 @@ const Index = () => {
                 </div>
 
                 <p className="education-description">
-                  For my capstone project, I developed TraKs, a full-stack mobile and web system featuring
-                  real-time alerts, onboarding flows, and reporting functionalities. Graduated as Cum Laude.
+                  Graduated Cum Laude. Built TraKs as a full-stack capstone project with real-time alerts, onboarding
+                  flows, and reporting features, which helped shape how I think about systems that need both usability
+                  and operational clarity.
                 </p>
               </article>
             </div>
           </Section>
 
-          <Section id="projects" title="Projects" className="section-gap-projects">
-            <div className="projects-panel">
-              <div
-                aria-hidden="true"
-                className="projects-grid"
-              />
-
-              <div className="projects-stack">
-                <div className="projects-list">
-                  {projects.map((project) => {
-                    const cardContent = (
-                      <>
-                        <div className="project-card-main">
-                          <img
-                            src={themeMode === "light" && "lightIcon" in project ? project.lightIcon ?? project.icon : project.icon}
-                            alt={project.name}
-                            className="project-card-icon"
-                          />
-                          <div>
-                            <p className="project-card-title">{project.name}</p>
-                            <p className="project-card-subtitle">{project.subtitle}</p>
-                          </div>
-                        </div>
-                        {"status" in project && project.status ? (
-                          <span className="project-card-status">{project.status}</span>
-                        ) : (
-                          <ArrowUpRight className="project-card-arrow" strokeWidth={1.8} />
-                        )}
-                      </>
-                    );
-
-                    if (project.href) {
-                      return (
-                        <a
-                          key={project.name}
-                          href={project.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="project-card"
-                        >
-                          {cardContent}
-                        </a>
-                      );
-                    }
-
-                    return (
-                      <div
-                        key={project.name}
-                        className="project-card project-card--static"
-                      >
-                        {cardContent}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </Section>
-
           <Section id="contact" title="Contact">
             <div className="contact-panel">
+              <p className="contact-copy">
+                Open to freelance work and junior-to-mid engineering roles focused on mobile products, frontend
+                systems, and reliability-driven user experiences.
+              </p>
               <a
                 href="mailto:dev.bimrochee@gmail.com"
                 className="contact-link"
               >
-                <span>Mail</span>
+                <span>Email</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </a>
               <br />
@@ -782,9 +933,8 @@ const Index = () => {
         <footer className="footer-fullbleed">
           <div className="footer-inner footer-copy">
             <span>© 2026 Bim Rochee Agliam</span>
-            <span>For Commission Contact Me</span>
-            <span>Let's Create Something Amazing Together!</span>
-            <span>Created with ❤️</span>
+            <span>Built to present systems thinking clearly.</span>
+            <span>Available for product-focused freelance and engineering work.</span>
           </div>
         </footer>
       </main>
