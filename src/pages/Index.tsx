@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -599,7 +600,7 @@ const Index = () => {
   };
 
   return (
-    <div className="relative isolate min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative isolate min-h-screen overflow-x-hidden bg-background text-foreground">
       <StarsBackground
         aria-hidden="true"
         starColor={themeMode === "dark" ? "rgba(255, 255, 255, 0.92)" : "rgba(20, 28, 40, 0.62)"}
@@ -636,6 +637,13 @@ const Index = () => {
               {menuOpen && (
                 <nav className="resume-menu-popover">
                   <div className="flex flex-col gap-2">
+                    <Link
+                      to="/resume"
+                      onClick={() => setMenuOpen(false)}
+                      className="resume-menu-link"
+                    >
+                      Resume
+                    </Link>
                     {scrollSections.map((item) => (
                       <a
                         key={item.id}
@@ -688,7 +696,7 @@ const Index = () => {
           </div>
         </header>
 
-        <main className="mx-auto max-w-[58rem] px-5 pb-12 pt-10 md:px-8 md:pb-14 md:pt-14">
+        <main className="portfolio-page-main mx-auto max-w-[58rem] px-5 pb-12 md:px-8 md:pb-14">
         <section id="about" className="hero-frame">
           <div className="hero-title-wrap">
             <h1 className="hero-title">
