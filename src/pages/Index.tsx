@@ -22,6 +22,7 @@ import tracoIconLight from "@/assets/traco-icon(light mode).png";
 import bumblebeeIcon from "@/assets/bumblebee-icon.png";
 import payvaultIcon from "@/assets/payvault-icon.png";
 import rahikeIcon from "@/assets/rahike-icon.png";
+import semiIcon from "@/assets/semi-icon.png";
 import { GravityStarsBackground } from "@/components/GravityStarsBackground";
 import { StarsBackground } from "@/components/StarsBackground";
 
@@ -151,6 +152,17 @@ const supportingProjects = [
       "Packages trail exploration, live hike tracking, and long-term outdoor progress into one mobile experience designed to feel premium and motivating.",
     tags: ["React Native", "Expo Router", "Live tracking", "Product design"],
     note: "Releasing soon",
+  },
+  {
+    name: "Semi",
+    subtitle: "Offline salary planning ledger",
+    icon: semiIcon,
+    overview:
+      "Built as an offline-first personal finance app for Filipino employees, centered on semi-monthly salary planning, wallet-based allocations, and a ledger approach that computes balances from actual money movement.",
+    impact:
+      "Turns payday budgeting into a more disciplined flow by giving every peso a destination, keeping financial data private on-device, and reducing balance errors through ledger-based tracking.",
+    tags: ["React Native", "Expo", "Offline-first", "Ledger-based"],
+    note: "In active testing",
   },
   {
     name: "PayVault",
